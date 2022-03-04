@@ -34,6 +34,10 @@ npx create-next-app@latest --typescript
 
 - 페이지나 컴포넌트 내에 css를 import하고 싶다면 반드시 module이어야 한다. 하지만 커스텀 App 컴포넌트가 있다면 거기에 모든 Global styles를 import할 수 있다.
 
+- children은 react가 제공하는 prop인데 하나의 컴포넌트를 또 다른 컴포넌트 안에 넣을 때 사용한다.
+
+- API를 사용할 때는 해당 사이트에 설명을 잘 읽어보고 URL 주소와 API KEY를 가져온다.
+
 ### CSR (Client-Side Render)
 
 - 브라우저가 유저가 보는 UI를 전부 만듦.(create-react-app의 방식)

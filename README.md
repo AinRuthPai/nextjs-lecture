@@ -38,6 +38,8 @@ npx create-next-app@latest --typescript
 
 - API를 사용할 때는 해당 사이트에 설명을 잘 읽어보고 URL 주소와 API KEY를 가져온다.
 
+##
+
 ### CSR (Client-Side Render)
 
 - 브라우저가 유저가 보는 UI를 전부 만듦.(create-react-app의 방식)
@@ -66,13 +68,13 @@ npx create-next-app@latest --typescript
 
 ### NextJS에서 styles를 추가하는 방법들
 
-#### CSS module
+#### 1. CSS module
 
 - 클래스 이름을 작성할 때 텍스트로 적지 않는다. (js 오브젝트에서의 프로퍼티 형식으로 적음 {})
 
   > 실제로 코드를 확인하면 충돌을 막기 위해 매번 클래스 이름이 다르게 되어있다. (다른 컴포넌트에서도 같은 클래스 이름을 사용 가능하다.)
 
-#### styled jsx
+#### 2. styled jsx
 
 - 해당 페이지나 컴포넌트 아래에 문법에 맞게 적으면 된다.(global은 전역 설정이다.)
 
@@ -85,4 +87,58 @@ npx create-next-app@latest --typescript
     text-decoration: none;
   }
 `}</style>
+```
+
+### API KEY를 숨기는 두 가지 방법
+
+#### 1. redirect & rewrite
+
+- next.config.js 참고
+
+  > source / destination / permanent
+  > 경로 뒤에 \*이 붙으면 모두 catch함
+
+  > ex)
+
+  ```
+  source: "/old-blog/:path*",
+  destination: "/new-blog/:path*,
+  permanent: false
+  ```
+
+- Redirect을 사용하면 들어오는 request 경로를 다른 destination 경로로 Redirect할 수 있다. Redirect을 사용하려면 next.config.js에서 redirects 키를 사용할 수 있다.
+
+- Rewrites를 사용하면 들어오는 request 경로를 다른 destination 경로에 매핑할 수 있다. Rewrites은 URL 프록시 역할을 하고 destination 경로를 mask하여 사용자가 사이트에서 위치를 변경하지 않은 것처럼 보이게 한다. 반대로 redirects은 새 페이지로 reroute되고 URL 변경 사항을 표시한다.
+
+- redirects은 source, destination 및 permanent 속성이 있는 객체를 포함하는 배열을 반환하는 비동기 함수이다.
+
+  source: 들어오는 request 경로 패턴 (request 경로)
+  destination: 라우팅하려는 경로 (redirect할 경로)
+  permanent: true인 경우 클라이언트와 search 엔진에 redirect를 영구적으로 cache하도록 지시하는 308 status code를 사용하고, false인 경우 일시적이고 cache되지 않은 307 status code를 사용한다.
+
+#### 2. getServerSideProps
+
+- 이 아래에 어떤 코드를 작성해도 그 코드는 서버에서 돌아가게 된다. (클라이언트 x)
+
+- 페이지에서 getServerSideProps(서버 측 렌더링)라는 함수를 export하는 경우 Next.js는 getServerSideProps에서 반환된 데이터를 사용하여 각 request에서 이 페이지를 pre-render한다. getServerSideProps는 서버 측에서만 실행되며 브라우저에서는 실행되지 않습니다.
+
+- getServerSideProps를 사용하여 request시 데이터 fetch하기
+  다음 예는 request 시 데이터를 fetch하고 결과를 pre-render하는 방법을 보여줍니다.
+
+```javascript
+function Page({ data }) {
+  // Render data...
+}
+
+// This gets called on every request
+export async function getServerSideProps() {
+  // Fetch data from external API
+  const res = await fetch(`https://.../data`);
+  const data = await res.json();
+
+  // Pass data to the page via props
+  return { props: { data } };
+}
+
+export default Page;
 ```

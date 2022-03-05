@@ -6,7 +6,7 @@ export default function NavBar() {
   console.log(router);
   return (
     <nav>
-      <img src='/vercel.svg' />
+      <img src='/1360231.png' />
       <div>
         <Link href='/'>
           <a className={router.pathname === "/" ? "active" : ""}>Home</a>
@@ -22,12 +22,15 @@ export default function NavBar() {
           flex-direction: column;
           align-items: center;
           padding-top: 20px;
-          padding-bottom: 10px;
+          padding-bottom: 20px;
           box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
         }
         img {
-          max-width: 100px;
-          margin-bottom: 5px;
+          max-width: 120px;
+          margin-bottom: 10px;
+          border: 5px solid black;
+          padding: 0px 5px 5px 0px;
+          border-radius: 50%;
         }
         nav a {
           font-weight: 600;

@@ -120,10 +120,10 @@ npx create-next-app@latest --typescript
 
 - 이 아래에 어떤 코드를 작성해도 그 코드는 서버에서 돌아가게 된다. (클라이언트 x)
 
-- 페이지에서 getServerSideProps(서버 측 렌더링)라는 함수를 export하는 경우 Next.js는 getServerSideProps에서 반환된 데이터를 사용하여 각 request에서 이 페이지를 pre-render한다. getServerSideProps는 서버 측에서만 실행되며 브라우저에서는 실행되지 않습니다.
+- 페이지에서 getServerSideProps(서버 측 렌더링)라는 함수를 export하는 경우 Next.js는 getServerSideProps에서 반환된 데이터를 사용하여 각 request에서 이 페이지를 pre-render한다. getServerSideProps는 서버 측에서만 실행되며 브라우저에서는 실행되지 않는다.
 
 - getServerSideProps를 사용하여 request시 데이터 fetch하기
-  다음 예는 request 시 데이터를 fetch하고 결과를 pre-render하는 방법을 보여줍니다.
+  다음 예시는 request 시 데이터를 fetch하고 결과를 pre-render하는 방법이다.
 
 ```javascript
 function Page({ data }) {
@@ -142,3 +142,39 @@ export async function getServerSideProps() {
 
 export default Page;
 ```
+
+- 언제 getServerSideProps를 사용해야 하나요?
+
+  > request time에 반드시 데이터를 fetch해와야 하는 페이지를 pre-render해야 하는 경우에만 getServerSideProps를 사용해야 합니다.
+
+  > 데이터를 pre-render할 필요가 없다면 client side에서 데이터를 가져오는 것을 고려해야 합니다.
+
+  > 클라이언트 측에서 데이터 가져오기 (Fetching data on the client side)
+  > 페이지에 자주 업데이트되는 데이터가 포함되어 있고 데이터를 pre-render할 필요가 없는 경우 클라이언트 측에서 데이터를 가져올 수 있습니다.
+
+  1. 먼저 데이터가 없는 페이지를 즉시 표시합니다.
+  2. 페이지의 일부는 Static Generation을 사용해 pre-render할 수 있습니다.
+  3. 없는 데이터를 위해 loading 상태를 표시할 수 있습니다.
+  4. 그런 다음 클라이언트 측에서 데이터를 가져와 준비가 되면 표시합니다.
+
+  > 이 접근 방식은 예를 들어 사용자 대시보드 페이지에 적합합니다.
+  > 왜냐하면 대시보드는 사용자별 비공개 페이지이기 때문에 SEO와는 관련이 없으며 페이지를 미리 렌더링할 필요가 없습니다. 또한 데이터는 자주 업데이트되므로 요청 시 데이터를 가져와야 합니다.
+
+#### Dynamic Routes
+
+- page에 대괄호 [] 를 추가하여 생성할 수 있다.
+
+- 대괄호 안에 세 개의 점 ... 을 추가하여 모든 경로를 포착하도록 확장할 수 있다.
+
+#### router.push
+
+- 클라이언트 측 전환을 처리합니다. 이 방법은 next/link가 충분하지 않은 경우에 유용합니다.
+
+#### [...params].js에서 [] 추가 시 에러가 고쳐지는 이유
+
+- 미리 렌더링이 되기 때문에 html파일이 먼저 내려온다. 이 때 문제가 js가 아직 다운로드가 되지 않았기 때문에 useRouter()로 정보를 제대로 가져오지 못하는 상태가 된다. 그렇기 때문에 초기에는 빈 배열을 추가해서 오류가 발생하지 않도록 해 주고 js가 다시 렌더링하게 되면 그 때는 값을 가져와서 뿌려주는 역할을 하게 된다.
+
+#### 404 Page
+
+- 방문할 때마다 서버 렌더링 오류 페이지가 발생하면 Next.js 서버의 로드가 증가합니다. 이로 인해 비용이 증가하고 경험이 느려질 수 있습니다. 위의 문제를 피하기 위해, Next.js는 추가 파일을 추가할 필요 없이 기본적으로 정적 404 페이지를 제공합니다. 이 파일은 빌드 시 정적으로 생성됩니다.
+  빌드 시 데이터를 가져와야 하는 경우 이 페이지 내에서 getStaticProps를 사용할 수 있습니다.
